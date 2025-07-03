@@ -1,0 +1,46 @@
+name: .NET Core 2.0 Pipeline (with Custom Actions)
+
+on:
+  workflow_dispatch:
+    inputs:
+      dotnet_version:
+        description: "Version of .NET Core SDK"
+        required: true
+        default: "2.0.x"
+      publish_output:
+        description: "Publish output directory"
+        required: true
+        default: "./publish"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build .NET Project
+        uses: ./.github/actions/build-dotnet
+        with:
+          dotnet_version: ${{ inputs.dotnet_version }}
+          publish_output: ${{ inputs.publish_output }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-app
+          path: ${{ inputs.publish_output }}
+
+  deploy:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dotnet-app
+
+      - name: Deploy .NET Project
+        uses: ./.github/actions/deploy-dotnet
+        with:
+          publish_output: ${{ inputs.publish_output }}

@@ -1,0 +1,32 @@
+name: 'Build .NET'
+description: 'Setup .NET, restore, build, test, and publish'
+inputs:
+  dotnet_version:
+    description: 'Version of .NET Core SDK'
+    required: true
+  publish_output:
+    description: 'Publish output directory'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet_version }}
+
+    - name: Restore dependencies
+      shell: pwsh
+      run: dotnet restore
+
+    - name: Build
+      shell: pwsh
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Test
+      shell: pwsh
+      run: dotnet test --no-build --verbosity normal
+
+    - name: Publish (Build for Deployment)
+      shell: pwsh
+      run: dotnet publish --configuration Release --output "${{ inputs.publish_output }}"

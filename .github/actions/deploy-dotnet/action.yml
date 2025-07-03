@@ -1,0 +1,14 @@
+name: 'Deploy .NET'
+description: 'Deploy published .NET app'
+inputs:
+  publish_output:
+    description: 'Publish output directory'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: List published files (replace with actual deploy step)
+      shell: pwsh
+      run: |
+        Write-Host "Published files in ${{ inputs.publish_output }}:"
+        Get-ChildItem -Recurse "${{ inputs.publish_output }}" | Format-List
