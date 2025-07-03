@@ -41,6 +41,6 @@ jobs:
           name: dotnet-app
 
       - name: Deploy .NET Project
-        uses: ./.github/action/deploy-dotnet
+        uses: ./.github/actions/deploy-dotnet
         with:
           publish_output: ${{ inputs.publish_output }}
